@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/07 13:43:54 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/07 15:54:23 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,26 @@ typedef struct s_param
 	int	num_cycles;
 }		t_param;
 
+typedef struct s_philo
+{
+	int				index;
+	// pthread_mutex_t	mutex_fork;
+	int				times_eaten;
+	pthread_t		tid;
+}		t_philo;
+
 //Init
 t_param	*parse_params(int argc, char **argv);
+t_philo	*init_one_philo(t_param *params, int i);
+t_philo	**init_philos(t_param *params);
+
+//Clears
+void	clear_philo_arr(t_philo **philos, int index);
+
+//Routines
+void	*simple_routine(void *data);
+
+//DEbug
+void	print_philos(t_philo **philos, t_param *params);
 
 #endif

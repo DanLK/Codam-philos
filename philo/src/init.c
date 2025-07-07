@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/07 13:44:16 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/07 15:50:17 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,38 @@ t_param	*parse_params(int argc, char **argv)
 		params->num_cycles = -1;
 	}
 	return (params);
+}
+
+t_philo	*init_one_philo(t_param *params, int i)
+{
+	t_philo	*philo;
+
+	(void)params;
+	philo = malloc(sizeof(t_philo));
+	if (!philo)
+		return (NULL);
+	philo->index = i + 1;
+	philo->times_eaten = 0;
+	philo->tid = 0;
+	return (philo);
+}
+
+t_philo	**init_philos(t_param *params)
+{
+	t_philo	**philos;
+	int		i;
+
+	philos = malloc((params->num_philos + 1) * sizeof(t_philo *));
+	if (!philos)
+		return (NULL);
+	i = 0;
+	while (i < params->num_philos)
+	{
+		philos[i] = init_one_philo(params, i);
+		if (!philos[i])
+			return (clear_philo_arr(philos, i), NULL);
+		i++;
+	}
+	philos[i] = NULL;
+	return(philos);
 }
