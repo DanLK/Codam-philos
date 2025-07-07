@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:19:42 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/07 15:59:35 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/07 16:20:37 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	main(int argc, char **argv)
 		return (free(params), 1);
 	while (i < params->num_philos)
 	{
-		pthread_create(&philos[i]->tid, NULL, simple_routine, philos[i]);
+		pthread_create(&philos[i]->tid, NULL, eat_routine, philos[i]);
 		i++;
 	}
 	i = 0;
@@ -42,7 +42,7 @@ int	main(int argc, char **argv)
 		i++;
 	}
 	printf("--------------------------------------\n");
-	print_philos(philos, params);
+	// print_philos(philos, params);
 	clear_philo_arr(philos, params->num_philos);
 	free(params);
 	return (0);

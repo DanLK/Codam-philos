@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/07 15:54:23 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/07 16:40:38 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdio.h>
 # include <string.h>
 # include <stdlib.h>
+# include <unistd.h>
 
 typedef struct s_param
 {
@@ -30,8 +31,10 @@ typedef struct s_param
 typedef struct s_philo
 {
 	int				index;
-	// pthread_mutex_t	mutex_fork;
+	pthread_mutex_t	mutex_fork;
 	int				times_eaten;
+	int				total_philos;
+	int				time_eat;
 	pthread_t		tid;
 }		t_philo;
 
@@ -45,6 +48,7 @@ void	clear_philo_arr(t_philo **philos, int index);
 
 //Routines
 void	*simple_routine(void *data);
+void	*eat_routine(void *data);
 
 //DEbug
 void	print_philos(t_philo **philos, t_param *params);

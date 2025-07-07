@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/07 15:50:17 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/07 16:39:25 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,15 @@ t_philo	*init_one_philo(t_param *params, int i)
 {
 	t_philo	*philo;
 
-	(void)params;
 	philo = malloc(sizeof(t_philo));
 	if (!philo)
 		return (NULL);
 	philo->index = i + 1;
 	philo->times_eaten = 0;
 	philo->tid = 0;
+	philo->total_philos = params->num_philos;
+	philo->time_eat = params->time_eat;
+	pthread_mutex_init(&(philo->mutex_fork), NULL);
 	return (philo);
 }
 
