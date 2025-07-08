@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/07 16:39:25 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/08 14:43:09 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,23 +39,25 @@ t_param	*parse_params(int argc, char **argv)
 	return (params);
 }
 
-t_philo	*init_one_philo(t_param *params, int i)
+t_philo	*init_one_philo(t_param *params, t_fork **forks, int i)
 {
 	t_philo	*philo;
 
 	philo = malloc(sizeof(t_philo));
 	if (!philo)
 		return (NULL);
-	philo->index = i + 1;
+	philo->index = i;
 	philo->times_eaten = 0;
 	philo->tid = 0;
-	philo->total_philos = params->num_philos;
-	philo->time_eat = params->time_eat;
-	pthread_mutex_init(&(philo->mutex_fork), NULL);
+	// philo->total_philos = params->num_philos;
+	// philo->time_eat = params->time_eat;
+	philo->params = params;
+	// pthread_mutex_init(&(philo->mutex_fork), NULL);
+	philo->forks = forks;
 	return (philo);
 }
 
-t_philo	**init_philos(t_param *params)
+t_philo	**init_philos(t_param *params, t_fork **forks)
 {
 	t_philo	**philos;
 	int		i;
@@ -66,11 +68,43 @@ t_philo	**init_philos(t_param *params)
 	i = 0;
 	while (i < params->num_philos)
 	{
-		philos[i] = init_one_philo(params, i);
+		philos[i] = init_one_philo(params, forks, i);
 		if (!philos[i])
 			return (clear_philo_arr(philos, i), NULL);
 		i++;
 	}
 	philos[i] = NULL;
 	return(philos);
+}
+
+t_fork	*init_one_fork(int index)
+{
+	t_fork	*fork;
+
+	fork = malloc(sizeof(t_fork));
+	if (!fork)
+		return (NULL);
+	fork->index = index;
+	pthread_mutex_init(&(fork->mutex_fork), NULL);
+	return (fork);
+}
+
+t_fork	**init_forks(t_param *params)
+{
+	t_fork	**forks;
+	int		i;
+
+	forks = malloc((params->num_philos + 1) * sizeof(t_fork *));
+	if (!forks)
+		return (NULL);
+	i = 0;
+	while (i < params->num_philos)
+	{
+		forks[i] = init_one_fork(i);
+		if (!forks[i])
+			return (clear_fork_arr(forks, i), NULL);
+		i++;
+	}
+	forks[i] = NULL;
+	return (forks);
 }

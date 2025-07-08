@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:19:42 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/07 16:20:37 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/08 14:30:00 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	main(int argc, char **argv)
 {
 	t_param	*params;
 	t_philo	**philos;
+	t_fork	**forks;
 	int		i;
 
 	params = parse_params(argc, argv);
@@ -27,9 +28,12 @@ int	main(int argc, char **argv)
 	printf("Time to eat: %d\n", params->time_eat);
 	printf("Time to sleep: %d\n", params->time_sleep);
 	printf("Num cycles: %d\n____________________________\n\n", params->num_cycles);
-	philos = init_philos(params);
-	if (!philos)
+	forks = init_forks(params);
+	if (!forks)
 		return (free(params), 1);
+	philos = init_philos(params, forks);
+	if (!philos)
+		return (clear_fork_arr(forks, params->num_philos), free(params), 1);
 	while (i < params->num_philos)
 	{
 		pthread_create(&philos[i]->tid, NULL, eat_routine, philos[i]);
