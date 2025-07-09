@@ -1,5 +1,5 @@
 NAME = philo
-SRC = philo.c init.c clear.c routines.c debug.c
+SRC = philo.c init.c clear.c routines.c utils.c debug.c
 SRC_DIR = ./src
 OBJ_DIR = ./obj
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
@@ -9,11 +9,13 @@ CFLAGS += -Werror -Wall -Wextra
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) -fsanitize=thread -Iinclude -o $(NAME) $(CFLAGS) $(OBJ) 
+	$(CC) -Iinclude -o $(NAME) $(CFLAGS) $(OBJ)
+#-fsanitize=thread 
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	$(CC) -c -fsanitize=thread -Iinclude $(CFLAGS) -o $@ $<
+	$(CC) -c -Iinclude $(CFLAGS) -o $@ $<
+#-fsanitize=thread
 
 clean:
 	rm -f $(OBJ)

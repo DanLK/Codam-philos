@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/08 14:43:09 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/09 16:39:02 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ t_param	*parse_params(int argc, char **argv)
 		params->time_die = atoi(argv[2]);
 		params->time_eat = atoi(argv[3]);
 		params->time_sleep = atoi(argv[4]);
+		params->time = get_start_time();
+		pthread_mutex_init(&params->print, NULL);
 		if (argc == 6)
 		params->num_cycles = atoi(argv[5]);
 		else
@@ -46,8 +48,10 @@ t_philo	*init_one_philo(t_param *params, t_fork **forks, int i)
 	philo = malloc(sizeof(t_philo));
 	if (!philo)
 		return (NULL);
+	memset(philo, 0, sizeof(t_philo));
 	philo->index = i;
 	philo->times_eaten = 0;
+	philo->last_meal = 0;
 	philo->tid = 0;
 	// philo->total_philos = params->num_philos;
 	// philo->time_eat = params->time_eat;

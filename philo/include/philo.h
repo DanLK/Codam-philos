@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/08 15:29:04 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/09 16:19:05 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,26 @@
 # include <string.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <sys/time.h>
 
 # define YELLOW "\e[1;33m"
 # define YELlOW_B "\e[1;43m"
-# define PURPLE "\e[1;94m"
-# define PURPLE_B "\e[1;104m"
+# define PURPLE "\e[1;35m"
+# define PURPLE_B "\e[1;45m"
 # define RED "\e[1;31m"
+# define BLUE "\e[1;34m"
+# define GRAY "\e[1;37m"
 # define RESET "\e[0m"
 
 typedef struct s_param
 {
-	int	num_philos;
-	int	time_die;
-	int	time_eat;
-	int	time_sleep;
-	int	num_cycles;
+	int				num_philos;
+	int				time_die;
+	int				time_eat;
+	int				time_sleep;
+	int				num_cycles;
+	long long		time;
+	pthread_mutex_t	print;
 }		t_param;
 
 typedef struct s_fork
@@ -43,13 +48,13 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int				index;
-	int				times_eaten;
+	int			index;
+	int			times_eaten;
 //	int				total_philos;
-//	int				time_eat;
-	pthread_t		tid;
-	t_param			*params;
-	t_fork			**forks;
+	long long	last_meal;
+	pthread_t	tid;
+	t_param		*params;
+	t_fork		**forks;
 }		t_philo;
 
 
@@ -67,6 +72,12 @@ void	clear_fork_arr(t_fork **forks, int index);
 //Routines
 void	*simple_routine(void *data);
 void	*eat_routine(void *data);
+void	*simple_combined_routine(void *data);
+void	*sleep_routine(void *data);
+
+//Utils
+long long	get_start_time(void);
+long long	get_timestamp(long long start_time);
 
 //DEbug
 void	print_philos(t_philo **philos, t_param *params);
