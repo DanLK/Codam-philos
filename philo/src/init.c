@@ -6,11 +6,22 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/09 16:39:02 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/11 15:53:58 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static int	get_time_to_think(int eat, int sleep, int n)
+{
+	int	think;
+
+	think = eat + (n % 2) * eat - sleep;
+	if (think >= 0)
+		return (think);
+	else
+		return (0);
+}
 
 t_param	*parse_params(int argc, char **argv)
 {
@@ -32,6 +43,8 @@ t_param	*parse_params(int argc, char **argv)
 		params->time_eat = atoi(argv[3]);
 		params->time_sleep = atoi(argv[4]);
 		params->time = get_start_time();
+		params->time_think = get_time_to_think(params->time_eat, params->time_sleep, params->num_philos);
+		printf("Time to think: %d\n", params->time_think);
 		pthread_mutex_init(&params->print, NULL);
 		if (argc == 6)
 		params->num_cycles = atoi(argv[5]);

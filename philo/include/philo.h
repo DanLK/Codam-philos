@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/09 16:19:05 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/11 15:36:56 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_param
 	int				time_die;
 	int				time_eat;
 	int				time_sleep;
+	int				time_think;
 	int				num_cycles;
 	long long		time;
 	pthread_mutex_t	print;
@@ -56,6 +57,11 @@ typedef struct s_philo
 	t_param		*params;
 	t_fork		**forks;
 }		t_philo;
+
+typedef struct s_monitor
+{
+	t_philo	**philos;
+}		t_monitor;
 
 
 //Init
