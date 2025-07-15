@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/11 15:36:56 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/15 16:29:59 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <stdbool.h>
 # include <sys/time.h>
 
 # define YELLOW "\e[1;33m"
@@ -27,6 +28,7 @@
 # define RED "\e[1;31m"
 # define BLUE "\e[1;34m"
 # define GRAY "\e[1;37m"
+# define GREEN "\e[1;32m"
 # define RESET "\e[0m"
 
 typedef struct s_param
@@ -38,6 +40,8 @@ typedef struct s_param
 	int				time_think;
 	int				num_cycles;
 	long long		time;
+	bool			one_dead;
+	pthread_mutex_t	dead;
 	pthread_mutex_t	print;
 }		t_param;
 
@@ -53,6 +57,8 @@ typedef struct s_philo
 	int			times_eaten;
 //	int				total_philos;
 	long long	last_meal;
+	pthread_mutex_t	x_eaten_mut;
+	pthread_mutex_t	last_meal_mut;
 	pthread_t	tid;
 	t_param		*params;
 	t_fork		**forks;
@@ -60,7 +66,9 @@ typedef struct s_philo
 
 typedef struct s_monitor
 {
-	t_philo	**philos;
+	t_philo		**philos;
+	int			num_philos;
+	pthread_t	tid;
 }		t_monitor;
 
 
@@ -70,6 +78,7 @@ t_philo	*init_one_philo(t_param *params, t_fork **forks, int i);
 t_philo	**init_philos(t_param *params, t_fork **forks);
 t_fork	*init_one_fork(int index);
 t_fork	**init_forks(t_param *params);
+t_monitor	*init_monitor(t_philo **philos, int num_philos);
 
 //Clears
 void	clear_philo_arr(t_philo **philos, int index);
@@ -80,6 +89,7 @@ void	*simple_routine(void *data);
 void	*eat_routine(void *data);
 void	*simple_combined_routine(void *data);
 void	*sleep_routine(void *data);
+void	*monitor_routine(void *data);
 
 //Utils
 long long	get_start_time(void);
