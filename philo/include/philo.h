@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/15 16:29:59 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 13:50:18 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	clear_fork_arr(t_fork **forks, int index);
 //Routines
 void	*simple_routine(void *data);
 void	*eat_routine(void *data);
-void	*simple_combined_routine(void *data);
+void	*life_routine(void *data);
 void	*sleep_routine(void *data);
 void	*monitor_routine(void *data);
 

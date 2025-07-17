@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:43:39 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/15 16:51:19 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 14:08:29 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,16 @@ void	*eat_routine(void *data)
 	printf("%lld %s%d has taken a fork%s\n", get_timestamp(philo->params->time), YELLOW, philo->index, RESET);
 	pthread_mutex_unlock(&(philo->params->print));
 	pthread_mutex_lock(&(philo->last_meal_mut));
-	philo->last_meal = get_timestamp(philo->params->time); // PROTECT WITH A MUTEX!!!
-	pthread_mutex_unlock(&(philo->last_meal_mut));
+	if (someone_has_died(philo->params))
+		return (pthread_mutex_unlock(&(philo->last_meal_mut)), NULL);
+	philo->last_meal = get_timestamp(philo->params->time);
 	pthread_mutex_lock(&(philo->params->print));
 	printf("%lld %s%d is eating%s\n", philo->last_meal, RED, philo->index, RESET);
+	pthread_mutex_unlock(&(philo->last_meal_mut));
 	pthread_mutex_unlock(&(philo->params->print));
 	usleep(philo->params->time_eat * 1000);
 	pthread_mutex_lock(&(philo->x_eaten_mut));
-	philo->times_eaten++; //PROTECT WITH A MUTEX FOR THE MONITORING
+	philo->times_eaten++;
 	pthread_mutex_unlock(&(philo->x_eaten_mut));
 	pthread_mutex_unlock(&((philo->forks[first])->mutex_fork));
 	pthread_mutex_unlock(&((philo->forks[second])->mutex_fork));
@@ -94,24 +96,20 @@ static bool	completed_meals(t_philo	*philo)
 	return (finished_meals);
 }
 
-void	*simple_combined_routine(void *data)
+void	*life_routine(void *data)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
+	// if (philo->index % 2 == 1)
+	// 	usleep(5000);
 	while (!completed_meals(philo))
 	{
-		// pthread_mutex_lock(&(philo->params->print));
-		// pthread_mutex_unlock(&(philo->params->print));
-		// printf("Philo %d doing their routine\n", philo->index);
 		if (someone_has_died(philo->params))
 			break ;
-		// if (philo->times_eaten == 0 && philo->index % 2 == 1)
-		// 	usleep(1);
 		eat_routine(data);
 		if (someone_has_died(philo->params))
 			break ;
-		// printf("%lld %d has eaten %d times\n", get_timestamp(philo->params->time), philo->index, philo->times_eaten);
 		sleep_routine(data);
 		if (someone_has_died(philo->params))
 			break ;
@@ -138,29 +136,26 @@ void	*sleep_routine(void *data)
 	printf("%lld %s%d is sleeping%s\n", get_timestamp(philo->params->time), BLUE, index, RESET);
 	pthread_mutex_unlock(&(philo->params->print));
 	usleep(philo->params->time_sleep * 1000);
-	// pthread_mutex_lock(&(philo->params->print));
-	// // printf("[%lld] Philo %s#%d finished sleeping%s\n", get_timestamp(philo->params->time), BLUE, index, RESET);
-	// pthread_mutex_unlock(&(philo->params->print));
 	return (NULL);
 }
 
 static bool philos_need_to_eat(t_philo	**philos, int num)
 {
 	int		i;
-	bool	need_to_eat;
+	int		times_eaten;
 
 	i = 0;
-	need_to_eat = false;
 	while (i < num)
 	{
 		pthread_mutex_lock(&(philos[i]->x_eaten_mut));
-		if (philos[i]->times_eaten < philos[i]->params->num_cycles
-			|| philos[i]->params->num_cycles == -1)
-			need_to_eat = true;
+		times_eaten = philos[i]->times_eaten;
 		pthread_mutex_unlock(&(philos[i]->x_eaten_mut));
+		if (times_eaten < philos[i]->params->num_cycles
+			|| philos[i]->params->num_cycles == -1)
+			return (true);
 		i++;
 	}
-	return (need_to_eat);
+	return (false);
 }
 
 static bool	time_expired(t_philo **philos, int index)
@@ -179,36 +174,28 @@ void	*monitor_routine(void *data)
 {
 	t_monitor	*monitor;
 	int			index;
-	int			time_die;
 	
 	monitor = (t_monitor *)data;
-	time_die = monitor->philos[0]->params->time_die;
-	// printf("Time to die: %d\n", time_die);
 	while (philos_need_to_eat(monitor->philos, monitor->num_philos)
 		&& !someone_has_died(monitor->philos[0]->params))
 	{
 		index = 0;
 		while (index < monitor->num_philos)
 		{
-		// 	printf("Checking philo %d\n", index);
-		// 	printf("Time - last meal %lld\n", current_time - monitor->philos[index]->last_meal);
 			if (time_expired(monitor->philos, index))
 			{
 				pthread_mutex_lock(&(monitor->philos[0]->params->dead));
 				monitor->philos[0]->params->one_dead = true;
-				pthread_mutex_unlock(&(monitor->philos[0]->params->dead));
 				pthread_mutex_lock(&(monitor->philos[0]->params->print));
-				printf("%lld %s%d has died%s\n", get_timestamp(monitor->philos[index]->params->time),
-					GREEN, index, RESET);
+				printf("%lld %s%d died%s\n", get_timestamp(monitor->philos[index]->params->time),
+				GREEN, index, RESET);
+				pthread_mutex_unlock(&(monitor->philos[0]->params->dead));
 				pthread_mutex_unlock(&(monitor->philos[0]->params->print));
 				break ;
-				// usleep(5000);
-				// exit(EXIT_FAILURE);
 			}
 			index++;
 		}
 	}
-	// printf("Monitor finished\n");
 	return (NULL);
 }
 
