@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/17 13:50:18 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 15:46:03 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_param
 	int				time_think;
 	int				num_cycles;
 	long long		time;
+	pthread_mutex_t	time_mutex;
 	bool			one_dead;
 	pthread_mutex_t	dead;
 	pthread_mutex_t	print;

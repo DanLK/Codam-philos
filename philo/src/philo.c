@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:19:42 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/17 13:52:03 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 16:24:52 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,15 @@ int	main(int argc, char **argv)
 	monitor = init_monitor(philos, params->num_philos);
 	if (!monitor)
 		return (clear_fork_arr(forks, params->num_philos), clear_fork_arr(forks, params->num_philos), free(params), 1);
-	pthread_create(&monitor->tid, NULL, monitor_routine, monitor);
+	params->time = get_start_time() + 50;
 	while (i < params->num_philos)
 	{ 
 		pthread_create(&philos[i]->tid, NULL, life_routine, philos[i]);
 		i++;
 	}
-	i = 0;
+	pthread_create(&monitor->tid, NULL, monitor_routine, monitor);
 	pthread_join(monitor->tid, NULL);
+	i = 0;
 	while (i < params->num_philos)
 	{
 		pthread_join(philos[i]->tid, NULL);

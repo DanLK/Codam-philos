@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:43:39 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/17 14:08:29 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 16:24:49 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,16 +99,22 @@ static bool	completed_meals(t_philo	*philo)
 void	*life_routine(void *data)
 {
 	t_philo	*philo;
+	// long long	start;
 
 	philo = (t_philo *)data;
-	// if (philo->index % 2 == 1)
-	// 	usleep(5000);
+	while (get_start_time() < philo->params->time)
+		usleep(30);
+	// printf("%lld %d starting to live\n", get_timestamp(philo->params->time), philo->index);
+	if (philo->index % 2 == 1)
+		usleep(1000);
 	while (!completed_meals(philo))
 	{
-		if (someone_has_died(philo->params))
-			break ;
+		// if (someone_has_died(philo->params))
+		// 	break ;
 		eat_routine(data);
-		if (someone_has_died(philo->params))
+		// if (someone_has_died(philo->params))
+		// 	break ;
+		if (completed_meals(philo))
 			break ;
 		sleep_routine(data);
 		if (someone_has_died(philo->params))
