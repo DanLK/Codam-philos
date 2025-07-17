@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:43:39 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/11 15:57:50 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 14:08:29 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,184 @@ void	*simple_routine(void *data)
 	return (NULL);
 }
 
+static bool	someone_has_died(t_param *params)
+{
+	bool	someone_died;
+	
+	pthread_mutex_lock(&(params->dead));
+	someone_died = params->one_dead;
+	pthread_mutex_unlock(&(params->dead));
+	return (someone_died);
+}
+
 void	*eat_routine(void *data)
+{
+	t_philo	*philo;
+	int		first;
+	int		second;
+	int		i_neighbor;
+
+	philo = (t_philo *)data;
+	i_neighbor = (philo->index + 1) % philo->params->num_philos;
+	if (philo->index != philo->params->num_philos - 1)
+	{
+		first = philo->index;
+		second = i_neighbor;
+	}
+	else
+	{
+		first = 0;
+		second = philo->index;
+	}
+	pthread_mutex_lock(&(philo->forks[first]->mutex_fork));
+	if (someone_has_died(philo->params))
+		return (pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)), NULL);
+	pthread_mutex_lock(&(philo->params->print));
+	printf("%lld %s%d has taken a fork%s\n", get_timestamp(philo->params->time), YELLOW, philo->index, RESET);
+	pthread_mutex_unlock(&(philo->params->print));
+	if (philo->index == i_neighbor)
+		return (pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)), NULL);
+	pthread_mutex_lock(&(philo->forks[second]->mutex_fork));
+	if (someone_has_died(philo->params))
+		return (pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
+			pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
+	pthread_mutex_lock(&(philo->params->print));
+	printf("%lld %s%d has taken a fork%s\n", get_timestamp(philo->params->time), YELLOW, philo->index, RESET);
+	pthread_mutex_unlock(&(philo->params->print));
+	pthread_mutex_lock(&(philo->last_meal_mut));
+	if (someone_has_died(philo->params))
+		return (pthread_mutex_unlock(&(philo->last_meal_mut)), NULL);
+	philo->last_meal = get_timestamp(philo->params->time);
+	pthread_mutex_lock(&(philo->params->print));
+	printf("%lld %s%d is eating%s\n", philo->last_meal, RED, philo->index, RESET);
+	pthread_mutex_unlock(&(philo->last_meal_mut));
+	pthread_mutex_unlock(&(philo->params->print));
+	usleep(philo->params->time_eat * 1000);
+	pthread_mutex_lock(&(philo->x_eaten_mut));
+	philo->times_eaten++;
+	pthread_mutex_unlock(&(philo->x_eaten_mut));
+	pthread_mutex_unlock(&((philo->forks[first])->mutex_fork));
+	pthread_mutex_unlock(&((philo->forks[second])->mutex_fork));
+	return (NULL);
+}
+
+static bool	completed_meals(t_philo	*philo)
+{
+	bool	finished_meals;
+
+	if (philo->params->num_cycles == -1)
+		return (false);
+	pthread_mutex_lock(&(philo->x_eaten_mut));
+	finished_meals = philo->times_eaten >= philo->params->num_cycles;
+	pthread_mutex_unlock(&(philo->x_eaten_mut));
+	return (finished_meals);
+}
+
+void	*life_routine(void *data)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)data;
+	// if (philo->index % 2 == 1)
+	// 	usleep(5000);
+	while (!completed_meals(philo))
+	{
+		if (someone_has_died(philo->params))
+			break ;
+		eat_routine(data);
+		if (someone_has_died(philo->params))
+			break ;
+		sleep_routine(data);
+		if (someone_has_died(philo->params))
+			break ;
+		pthread_mutex_lock(&(philo->params->print));
+		printf("%lld %s%d is thinking%s\n", get_timestamp(philo->params->time), GRAY, philo->index, RESET);
+		pthread_mutex_unlock(&(philo->params->print));
+		usleep(philo->params->time_think);
+		if (someone_has_died(philo->params))
+			break ;
+	}
+	return (NULL);
+}
+
+void	*sleep_routine(void *data)
+{
+	t_philo	*philo;
+	int		index;
+
+	philo = (t_philo *)data;
+	index = philo->index;
+	if (someone_has_died(philo->params))
+		return (NULL);
+	pthread_mutex_lock(&(philo->params->print));
+	printf("%lld %s%d is sleeping%s\n", get_timestamp(philo->params->time), BLUE, index, RESET);
+	pthread_mutex_unlock(&(philo->params->print));
+	usleep(philo->params->time_sleep * 1000);
+	return (NULL);
+}
+
+static bool philos_need_to_eat(t_philo	**philos, int num)
+{
+	int		i;
+	int		times_eaten;
+
+	i = 0;
+	while (i < num)
+	{
+		pthread_mutex_lock(&(philos[i]->x_eaten_mut));
+		times_eaten = philos[i]->times_eaten;
+		pthread_mutex_unlock(&(philos[i]->x_eaten_mut));
+		if (times_eaten < philos[i]->params->num_cycles
+			|| philos[i]->params->num_cycles == -1)
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+static bool	time_expired(t_philo **philos, int index)
+{
+	long long	current_time;
+	bool		time_expired;
+
+	current_time = get_timestamp(philos[index]->params->time);
+	pthread_mutex_lock(&(philos[index]->last_meal_mut));
+	time_expired = current_time - philos[index]->last_meal > philos[index]->params->time_die;
+	pthread_mutex_unlock(&(philos[index]->last_meal_mut));
+	return(time_expired);
+}
+
+void	*monitor_routine(void *data)
+{
+	t_monitor	*monitor;
+	int			index;
+	
+	monitor = (t_monitor *)data;
+	while (philos_need_to_eat(monitor->philos, monitor->num_philos)
+		&& !someone_has_died(monitor->philos[0]->params))
+	{
+		index = 0;
+		while (index < monitor->num_philos)
+		{
+			if (time_expired(monitor->philos, index))
+			{
+				pthread_mutex_lock(&(monitor->philos[0]->params->dead));
+				monitor->philos[0]->params->one_dead = true;
+				pthread_mutex_lock(&(monitor->philos[0]->params->print));
+				printf("%lld %s%d died%s\n", get_timestamp(monitor->philos[index]->params->time),
+				GREEN, index, RESET);
+				pthread_mutex_unlock(&(monitor->philos[0]->params->dead));
+				pthread_mutex_unlock(&(monitor->philos[0]->params->print));
+				break ;
+			}
+			index++;
+		}
+	}
+	return (NULL);
+}
+
+
+void	*eat_routine_old(void *data)
 {
 	t_philo		*philo;
 	int			index;
@@ -37,15 +214,24 @@ void	*eat_routine(void *data)
 		pthread_mutex_lock(&(philo->forks[0]->mutex_fork));
 	else
 		pthread_mutex_lock(&(philo->forks[index]->mutex_fork));
+	if (someone_has_died(philo->params))
+		return (NULL);
 	pthread_mutex_lock(&(philo->params->print));
 	// printf("%lld %sPhilo #%d has grabbed their left (own) fork%s\n", get_timestamp(philo->params->time), YELLOW, philo->index, RESET);
 	printf("%lld %s%d has taken a fork%s\n", get_timestamp(philo->params->time), YELLOW, philo->index, RESET);
 	// printf("Philo #%d is trying to get their right neighbor #%d's fork\n", philo->index, i_neighbor);
 	pthread_mutex_unlock(&(philo->params->print));
+	if (index == i_neighbor)
+	{
+		pthread_mutex_unlock(&(philo->forks[0]->mutex_fork));
+		return (NULL);
+	}
 	if (index == philo->params->num_philos -1)
 		pthread_mutex_lock(&(philo->forks[index]->mutex_fork));
 	else
 		pthread_mutex_lock(&(philo->forks[i_neighbor]->mutex_fork));
+	if (someone_has_died(philo->params))
+		return (NULL);
 	pthread_mutex_lock(&(philo->params->print));
 	// printf("[%lld] %sPhilo #%d has grabbed their neighbour's (#%d) fork%s\n", get_timestamp(philo->params->time), PURPLE, philo->index, i_neighbor, RESET);
 	printf("%lld %s%d has taken a fork%s\n", get_timestamp(philo->params->time), YELLOW, philo->index, RESET);
@@ -63,57 +249,3 @@ void	*eat_routine(void *data)
 	// printf("%sPhilo #%d has released their left (own) fork%s\n", YELlOW_B, philo->index, RESET);
 	return (NULL);
 }
-
-void	*simple_combined_routine(void *data)
-{
-	t_philo	*philo;
-	// int		think_time;
-
-	philo = (t_philo *)data;
-	// if (philo->params->num_cycles > 0)
-	// {
-	// if (philo->index % 2 != 0)
-	// 	usleep(10);
-	// think_time = (2 * philo->params->time_eat - philo->params->time_sleep) * 1000;
-	while (philo->params->num_cycles == -1 || philo->times_eaten < philo->params->num_cycles)
-	{
-		// pthread_mutex_lock(&(philo->params->print));
-		// pthread_mutex_unlock(&(philo->params->print));
-		eat_routine(data);
-		// printf("%lld %d has eaten %d times\n", get_timestamp(philo->params->time), philo->index, philo->times_eaten);
-		sleep_routine(data);
-		pthread_mutex_lock(&(philo->params->print));
-		printf("%lld %s%d is thinking%s\n", get_timestamp(philo->params->time), GRAY, philo->index, RESET);
-		pthread_mutex_unlock(&(philo->params->print));
-		usleep(philo->params->time_think);
-	}
-	// }
-	// else
-	// {
-	// 	eat_routine(data);
-	// 	sleep_routine(data);
-	// }
-	return (NULL);
-}
-
-void	*sleep_routine(void *data)
-{
-	t_philo	*philo;
-	int		index;
-
-	philo = (t_philo *)data;
-	index = philo->index;
-	pthread_mutex_lock(&(philo->params->print));
-	printf("%lld %s%d is sleeping%s\n", get_timestamp(philo->params->time), BLUE, index, RESET);
-	pthread_mutex_unlock(&(philo->params->print));
-	usleep(philo->params->time_sleep * 1000);
-	pthread_mutex_lock(&(philo->params->print));
-	// printf("[%lld] Philo %s#%d finished sleeping%s\n", get_timestamp(philo->params->time), BLUE, index, RESET);
-	pthread_mutex_unlock(&(philo->params->print));
-	return (NULL);
-}
-
-// void	*think_routine(void *data)
-// {
-
-// }

@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/11 15:53:58 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/15 16:30:30 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ t_param	*parse_params(int argc, char **argv)
 		params->time = get_start_time();
 		params->time_think = get_time_to_think(params->time_eat, params->time_sleep, params->num_philos);
 		printf("Time to think: %d\n", params->time_think);
+		pthread_mutex_init(&params->dead, NULL);
 		pthread_mutex_init(&params->print, NULL);
 		if (argc == 6)
 		params->num_cycles = atoi(argv[5]);
@@ -69,7 +70,8 @@ t_philo	*init_one_philo(t_param *params, t_fork **forks, int i)
 	// philo->total_philos = params->num_philos;
 	// philo->time_eat = params->time_eat;
 	philo->params = params;
-	// pthread_mutex_init(&(philo->mutex_fork), NULL);
+	pthread_mutex_init(&(philo->x_eaten_mut), NULL);
+	pthread_mutex_init(&(philo->last_meal_mut), NULL);
 	philo->forks = forks;
 	return (philo);
 }
@@ -124,4 +126,19 @@ t_fork	**init_forks(t_param *params)
 	}
 	forks[i] = NULL;
 	return (forks);
+}
+
+t_monitor	*init_monitor(t_philo **philos, int num_philos)
+{
+	t_monitor	*monitor;
+
+	if (!philos)
+		return (NULL);
+	monitor = malloc(sizeof(t_monitor));
+	if (!monitor)
+		return (NULL);
+	memset(monitor, 0, sizeof(t_monitor));
+	monitor->philos = philos;
+	monitor->num_philos = num_philos;
+	return (monitor);
 }
