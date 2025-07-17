@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/17 15:46:53 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 19:10:20 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,18 @@ t_param	*parse_params(int argc, char **argv)
 		if (!params)
 			return (NULL);
 		memset(params, 0, sizeof(t_param));
-		params->num_philos = atoi(argv[1]);
-		params->time_die = atoi(argv[2]);
-		params->time_eat = atoi(argv[3]);
-		params->time_sleep = atoi(argv[4]);
+		params->num_philos = ft_atoi(argv[1]);
+		params->time_die = ft_atoi(argv[2]);
+		params->time_eat = ft_atoi(argv[3]);
+		params->time_sleep = ft_atoi(argv[4]);
 		params->time = 0;
 		params->time_think = get_time_to_think(params->time_eat, params->time_sleep, params->num_philos);
-		printf("Time to think: %d\n", params->time_think);
+		// printf("Time to think: %d\n", params->time_think);
 		pthread_mutex_init(&params->time_mutex, NULL);
 		pthread_mutex_init(&params->dead, NULL);
 		pthread_mutex_init(&params->print, NULL);
 		if (argc == 6)
-		params->num_cycles = atoi(argv[5]);
+		params->num_cycles = ft_atoi(argv[5]);
 		else
 		params->num_cycles = -1;
 	}
@@ -68,8 +68,6 @@ t_philo	*init_one_philo(t_param *params, t_fork **forks, int i)
 	philo->times_eaten = 0;
 	philo->last_meal = 0;
 	philo->tid = 0;
-	// philo->total_philos = params->num_philos;
-	// philo->time_eat = params->time_eat;
 	philo->params = params;
 	pthread_mutex_init(&(philo->x_eaten_mut), NULL);
 	pthread_mutex_init(&(philo->last_meal_mut), NULL);

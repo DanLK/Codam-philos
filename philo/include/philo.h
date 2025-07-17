@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/17 15:46:03 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 19:12:09 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ typedef struct s_philo
 {
 	int			index;
 	int			times_eaten;
-//	int				total_philos;
 	long long	last_meal;
 	pthread_mutex_t	x_eaten_mut;
 	pthread_mutex_t	last_meal_mut;
@@ -74,29 +73,30 @@ typedef struct s_monitor
 
 
 //Init
-t_param	*parse_params(int argc, char **argv);
-t_philo	*init_one_philo(t_param *params, t_fork **forks, int i);
-t_philo	**init_philos(t_param *params, t_fork **forks);
-t_fork	*init_one_fork(int index);
-t_fork	**init_forks(t_param *params);
+t_param		*parse_params(int argc, char **argv);
+t_philo		*init_one_philo(t_param *params, t_fork **forks, int i);
+t_philo		**init_philos(t_param *params, t_fork **forks);
+t_fork		*init_one_fork(int index);
+t_fork		**init_forks(t_param *params);
 t_monitor	*init_monitor(t_philo **philos, int num_philos);
 
 //Clears
-void	clear_philo_arr(t_philo **philos, int index);
-void	clear_fork_arr(t_fork **forks, int index);
+void		clear_philo_arr(t_philo **philos, int index);
+void		clear_fork_arr(t_fork **forks, int index);
+void		destroy_mutexes(t_param *pars, t_fork **fks, t_philo **philos);
 
 //Routines
-void	*simple_routine(void *data);
-void	*eat_routine(void *data);
-void	*life_routine(void *data);
-void	*sleep_routine(void *data);
-void	*monitor_routine(void *data);
+void		*eat_routine(void *data);
+void		*life_routine(void *data);
+void		*sleep_routine(void *data);
+void		*monitor_routine(void *data);
 
 //Utils
 long long	get_start_time(void);
 long long	get_timestamp(long long start_time);
+int			ft_atoi(const char *nptr);
 
 //DEbug
-void	print_philos(t_philo **philos, t_param *params);
+void		print_philos(t_philo **philos, t_param *params);
 
 #endif

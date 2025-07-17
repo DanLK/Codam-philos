@@ -6,11 +6,18 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:19:42 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/17 16:24:52 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 18:56:58 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static void	clear_philo_data(t_param *params, t_philo **philos, t_fork **forks)
+{
+	clear_fork_arr(forks, params->num_philos);
+	clear_philo_arr(philos, params->num_philos);
+	free(params);
+}
 
 int	main(int argc, char **argv)
 {
@@ -32,26 +39,28 @@ int	main(int argc, char **argv)
 		return (clear_fork_arr(forks, params->num_philos), free(params), 1);
 	monitor = init_monitor(philos, params->num_philos);
 	if (!monitor)
-		return (clear_fork_arr(forks, params->num_philos), clear_fork_arr(forks, params->num_philos), free(params), 1);
+		return (clear_philo_data(params, philos, forks), 1);
 	params->time = get_start_time() + 50;
 	while (i < params->num_philos)
 	{ 
-		pthread_create(&philos[i]->tid, NULL, life_routine, philos[i]);
+		if (pthread_create(&philos[i]->tid, NULL, life_routine, philos[i]) != 0)
+			return (free(monitor), clear_philo_data(params, philos, forks), 1);
 		i++;
 	}
-	pthread_create(&monitor->tid, NULL, monitor_routine, monitor);
-	pthread_join(monitor->tid, NULL);
+	if (pthread_create(&monitor->tid, NULL, monitor_routine, monitor) != 0)
+		return (free(monitor), clear_philo_data(params, philos, forks), 1);
+	if (pthread_join(monitor->tid, NULL) != 0)
+		return (free(monitor), clear_philo_data(params, philos, forks), 1);
 	i = 0;
 	while (i < params->num_philos)
 	{
-		pthread_join(philos[i]->tid, NULL);
+		if (pthread_join(philos[i]->tid, NULL) != 0)
+			return (free(monitor), clear_philo_data(params, philos, forks), 1);
 		i++;
 	}
 	printf("--------------------------------------\n");
-	// print_philos(philos, params);
+	destroy_mutexes(params, forks, philos);
 	free(monitor);
-	clear_fork_arr(forks, params->num_philos);
-	clear_philo_arr(philos, params->num_philos);
-	free(params);
+	clear_philo_data(params, philos, forks);
 	return (0);
 }

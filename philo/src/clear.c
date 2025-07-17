@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:03:47 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/08 14:18:31 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/17 19:11:55 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,3 +50,19 @@ void	clear_fork_arr(t_fork **forks, int index)
 	free(forks);
 }
 
+void	destroy_mutexes(t_param *pars, t_fork **fks, t_philo **philos)
+{
+	int	i;
+
+	i = 0;
+	pthread_mutex_destroy(&(pars->time_mutex));
+	pthread_mutex_destroy(&(pars->dead));
+	pthread_mutex_destroy(&(pars->print));
+	while (i < pars->num_philos)
+	{
+		pthread_mutex_destroy(&(fks[i]->mutex_fork));
+		pthread_mutex_destroy(&(philos[i]->last_meal_mut));
+		pthread_mutex_destroy(&(philos[i]->x_eaten_mut));
+		i++;
+	}
+}
