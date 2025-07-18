@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:19:42 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/18 16:23:16 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 17:36:20 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static t_data	*populate_data(int argc, char **argv)
 		return (NULL);
 	params = parse_params(argc, argv);
 	if (!params)
-		return (NULL);
+		return (free(data), NULL);
 	forks = init_forks(params);
 	if (!forks)
 		return (NULL);
