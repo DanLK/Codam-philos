@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/17 19:12:09 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 13:52:11 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,13 @@ typedef struct s_monitor
 	pthread_t	tid;
 }		t_monitor;
 
+typedef struct s_data
+{
+	t_param		*params;
+	t_fork		**forks;
+	t_philo		**philos;
+	t_monitor	*monitor;
+}		t_data;
 
 //Init
 t_param		*parse_params(int argc, char **argv);
@@ -83,6 +90,7 @@ t_monitor	*init_monitor(t_philo **philos, int num_philos);
 //Clears
 void		clear_philo_arr(t_philo **philos, int index);
 void		clear_fork_arr(t_fork **forks, int index);
+void		clear_philo_data(t_param *params, t_philo **philos, t_fork **forks);
 void		destroy_mutexes(t_param *pars, t_fork **fks, t_philo **philos);
 
 //Routines

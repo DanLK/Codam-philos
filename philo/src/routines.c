@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:43:39 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/17 19:20:20 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 12:25:02 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,24 @@ static bool	someone_has_died(t_param *params)
 	someone_died = params->one_dead;
 	pthread_mutex_unlock(&(params->dead));
 	return (someone_died);
+}
+
+static bool	inevitable_death(t_param *params)
+{
+	bool	dead;
+
+	dead = false;
+	while (!dead)
+	{
+		pthread_mutex_lock(&(params->dead));
+		dead = params->one_dead;
+		pthread_mutex_unlock(&(params->dead));
+		if (!dead)
+			usleep(500);
+		else
+			return (true);
+	}
+	return (false);
 }
 
 void	*eat_routine(void *data)
@@ -48,7 +66,7 @@ void	*eat_routine(void *data)
 	printf("%lld %s%d has taken a fork%s\n", get_timestamp(philo->params->time), YELLOW, philo->index + 1, RESET);
 	pthread_mutex_unlock(&(philo->params->print));
 	if (philo->index == i_neighbor)
-		return (pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)), NULL);
+		return (inevitable_death(philo->params), pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)), NULL);
 	pthread_mutex_lock(&(philo->forks[second]->mutex_fork));
 	if (someone_has_died(philo->params))
 		return (pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
@@ -107,7 +125,7 @@ void	*life_routine(void *data)
 			break ;
 		eat_routine(data);
 		if (completed_meals(philo) || someone_has_died(philo->params))
-		break ;
+			break ;
 		sleep_routine(data);
 		if (someone_has_died(philo->params))
 			break ;
@@ -186,9 +204,10 @@ void	*monitor_routine(void *data)
 			{
 				pthread_mutex_lock(&(monitor->philos[0]->params->dead));
 				monitor->philos[0]->params->one_dead = true;
+				usleep(200);
 				pthread_mutex_lock(&(monitor->philos[0]->params->print));
-				printf("%lld %s%d died%s\n", get_timestamp(monitor->philos[index]->params->time),
-				GREEN, index + 1, RESET);
+				printf("%lld %s%d died%s\n",get_timestamp(monitor->philos[index]->params->time),
+					GREEN, index + 1, RESET);
 				pthread_mutex_unlock(&(monitor->philos[0]->params->dead));
 				pthread_mutex_unlock(&(monitor->philos[0]->params->print));
 				break ;

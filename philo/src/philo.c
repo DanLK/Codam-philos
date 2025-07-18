@@ -6,18 +6,11 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:19:42 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/17 18:56:58 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 13:53:56 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static void	clear_philo_data(t_param *params, t_philo **philos, t_fork **forks)
-{
-	clear_fork_arr(forks, params->num_philos);
-	clear_philo_arr(philos, params->num_philos);
-	free(params);
-}
 
 int	main(int argc, char **argv)
 {
@@ -58,7 +51,6 @@ int	main(int argc, char **argv)
 			return (free(monitor), clear_philo_data(params, philos, forks), 1);
 		i++;
 	}
-	printf("--------------------------------------\n");
 	destroy_mutexes(params, forks, philos);
 	free(monitor);
 	clear_philo_data(params, philos, forks);
