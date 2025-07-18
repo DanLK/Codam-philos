@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/09 11:59:31 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/09 14:18:56 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 17:41:18 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,14 @@ long long get_timestamp(long long start_time)
 		return (0);
 	time = ((long long)current_time.tv_sec * 1000 + (current_time.tv_usec / 1000)) - start_time;
 	return (time);
+}
+
+bool	valid_params(int argc, char **argv)
+{
+	if (ft_atoi(argv[1]) < 0 || ft_atoi(argv[2]) < 0 || ft_atoi(argv[3]) < 0
+		|| ft_atoi(argv[4]) < 0)
+		return (false);
+	if (argc == 6 && ft_atoi(argv[5]) < 0)
+		return (false);
+	return (true);
 }
