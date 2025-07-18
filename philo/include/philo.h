@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/18 15:48:55 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 17:09:07 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void		destroy_mutexes(t_param *pars, t_fork **fks, t_philo **philos);
 bool		someone_died(t_param *params);
 bool		inevitable_death(t_param *params);
 bool		completed_meals(t_philo	*philo);
-bool 		philos_need_to_eat(t_philo	**philos, int num);
+bool		philos_need_to_eat(t_philo **philos, int num);
 bool		time_expired(t_philo **philos, int index);
 
 //Routines
