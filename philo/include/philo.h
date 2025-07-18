@@ -6,12 +6,12 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/18 13:52:11 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 15:48:55 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-#define PHILO_H
+# define PHILO_H
 
 # include <pthread.h>
 # include <stdio.h>
@@ -22,9 +22,7 @@
 # include <sys/time.h>
 
 # define YELLOW "\e[1;33m"
-# define YELlOW_B "\e[1;43m"
 # define PURPLE "\e[1;35m"
-# define PURPLE_B "\e[1;45m"
 # define RED "\e[1;31m"
 # define BLUE "\e[1;34m"
 # define GRAY "\e[1;37m"
@@ -54,14 +52,17 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int			index;
-	int			times_eaten;
-	long long	last_meal;
+	int				index;
+	int				times_eaten;
+	long long		last_meal;
 	pthread_mutex_t	x_eaten_mut;
 	pthread_mutex_t	last_meal_mut;
-	pthread_t	tid;
-	t_param		*params;
-	t_fork		**forks;
+	pthread_t		tid;
+	t_param			*params;
+	t_fork			**forks;
+	int				first;
+	int				second;
+	int				neighbor;
 }		t_philo;
 
 typedef struct s_monitor
@@ -81,17 +82,26 @@ typedef struct s_data
 
 //Init
 t_param		*parse_params(int argc, char **argv);
-t_philo		*init_one_philo(t_param *params, t_fork **forks, int i);
 t_philo		**init_philos(t_param *params, t_fork **forks);
-t_fork		*init_one_fork(int index);
 t_fork		**init_forks(t_param *params);
 t_monitor	*init_monitor(t_philo **philos, int num_philos);
+
+//Init utils
+t_philo		*init_one_philo(t_param *params, t_fork **forks, int i);
+t_fork		*init_one_fork(int index);
 
 //Clears
 void		clear_philo_arr(t_philo **philos, int index);
 void		clear_fork_arr(t_fork **forks, int index);
 void		clear_philo_data(t_param *params, t_philo **philos, t_fork **forks);
 void		destroy_mutexes(t_param *pars, t_fork **fks, t_philo **philos);
+
+//Routine Checks
+bool		someone_died(t_param *params);
+bool		inevitable_death(t_param *params);
+bool		completed_meals(t_philo	*philo);
+bool 		philos_need_to_eat(t_philo	**philos, int num);
+bool		time_expired(t_philo **philos, int index);
 
 //Routines
 void		*eat_routine(void *data);
