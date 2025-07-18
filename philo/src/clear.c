@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:03:47 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/17 19:11:55 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 17:43:11 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,13 @@ void	clear_fork_arr(t_fork **forks, int index)
 		i++;
 	}
 	free(forks);
+}
+
+void	clear_philo_data(t_param *params, t_philo **philos, t_fork **forks)
+{
+	clear_fork_arr(forks, params->num_philos);
+	clear_philo_arr(philos, params->num_philos);
+	free(params);
 }
 
 void	destroy_mutexes(t_param *pars, t_fork **fks, t_philo **philos)

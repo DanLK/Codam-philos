@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/17 19:10:20 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 17:42:06 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,9 @@ t_param	*parse_params(int argc, char **argv)
 {
 	t_param	*params;
 
-	if (argc < 5 || argc > 6)
-	{
-		printf("Usage: <number_of_philos> <time_to_die> <time_to_eat> <time_to_sleep> [times_each_philo_must_eat]\n");
-		return (NULL);
-	}
+	if (argc < 5 || argc > 6 || !valid_params(argc, argv))
+		return (printf("Usage: <N> <ms_die> <ms_eat> <ms_sleep> [meals]\n"),
+			printf("Parameters should be positive integers\n"), NULL);
 	else
 	{
 		params = malloc(sizeof(t_param));

@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/18 13:52:11 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/18 17:41:14 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void		*monitor_routine(void *data);
 long long	get_start_time(void);
 long long	get_timestamp(long long start_time);
 int			ft_atoi(const char *nptr);
+bool		valid_params(int argc, char **argv);
 
 //DEbug
 void		print_philos(t_philo **philos, t_param *params);
