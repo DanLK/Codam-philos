@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/18 17:41:14 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/21 14:27:36 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,19 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int			index;
-	int			times_eaten;
-	long long	last_meal;
+	int				index;
+	int				times_eaten;
+	long long		last_meal;
 	pthread_mutex_t	x_eaten_mut;
 	pthread_mutex_t	last_meal_mut;
-	pthread_t	tid;
-	t_param		*params;
-	t_fork		**forks;
+	pthread_t		tid;
+	t_param			*params;
+	t_fork			**forks;
+	int				first;
+	int				second;
+	int				neighbor;
 }		t_philo;
+
 
 typedef struct s_monitor
 {
@@ -98,6 +102,10 @@ void		*eat_routine(void *data);
 void		*life_routine(void *data);
 void		*sleep_routine(void *data);
 void		*monitor_routine(void *data);
+
+// Routine utils
+bool	inevitable_death(t_param *params);
+bool	someone_died(t_param *params);
 
 //Utils
 long long	get_start_time(void);

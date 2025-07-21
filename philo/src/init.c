@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/18 17:42:06 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/21 14:23:44 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ t_param	*parse_params(int argc, char **argv)
 		params->time_sleep = ft_atoi(argv[4]);
 		params->time = 0;
 		params->time_think = get_time_to_think(params->time_eat, params->time_sleep, params->num_philos);
-		// printf("Time to think: %d\n", params->time_think);
 		pthread_mutex_init(&params->time_mutex, NULL);
 		pthread_mutex_init(&params->dead, NULL);
 		pthread_mutex_init(&params->print, NULL);
