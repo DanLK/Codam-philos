@@ -9,12 +9,12 @@ CFLAGS += -Werror -Wall -Wextra
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) -Iinclude -fsanitize=address -o $(NAME) $(CFLAGS) $(OBJ)
+	$(CC) -Iinclude -o $(NAME) $(CFLAGS) $(OBJ)
 #-fsanitize=thread 
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	$(CC) -c -Iinclude -fsanitize=address $(CFLAGS) -o $@ $<
+	$(CC) -c -Iinclude $(CFLAGS) -o $@ $<
 #-fsanitize=thread
 
 clean:
