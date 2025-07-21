@@ -1,5 +1,5 @@
 NAME = philo
-SRC = philo.c init.c clear.c routines.c utils.c atoi.c debug.c
+SRC = philo.c init.c clear.c routines.c eat_routine.c routine_utils.c utils.c atoi.c debug.c
 SRC_DIR = ./src
 OBJ_DIR = ./obj
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)

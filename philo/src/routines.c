@@ -6,97 +6,11 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:43:39 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/18 12:25:02 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/21 14:33:44 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static bool	someone_has_died(t_param *params)
-{
-	bool	someone_died;
-	
-	pthread_mutex_lock(&(params->dead));
-	someone_died = params->one_dead;
-	pthread_mutex_unlock(&(params->dead));
-	return (someone_died);
-}
-
-static bool	inevitable_death(t_param *params)
-{
-	bool	dead;
-
-	dead = false;
-	while (!dead)
-	{
-		pthread_mutex_lock(&(params->dead));
-		dead = params->one_dead;
-		pthread_mutex_unlock(&(params->dead));
-		if (!dead)
-			usleep(500);
-		else
-			return (true);
-	}
-	return (false);
-}
-
-void	*eat_routine(void *data)
-{
-	t_philo	*philo;
-	int		first;
-	int		second;
-	int		i_neighbor;
-
-	philo = (t_philo *)data;
-	i_neighbor = (philo->index + 1) % philo->params->num_philos;
-	if (philo->index != philo->params->num_philos - 1)
-	{
-		first = philo->index;
-		second = i_neighbor;
-	}
-	else
-	{
-		first = 0;
-		second = philo->index;
-	}
-	pthread_mutex_lock(&(philo->forks[first]->mutex_fork));
-	if (someone_has_died(philo->params))
-		return (pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)), NULL);
-	pthread_mutex_lock(&(philo->params->print));
-	printf("%lld %s%d has taken a fork%s\n", get_timestamp(philo->params->time), YELLOW, philo->index + 1, RESET);
-	pthread_mutex_unlock(&(philo->params->print));
-	if (philo->index == i_neighbor)
-		return (inevitable_death(philo->params), pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)), NULL);
-	pthread_mutex_lock(&(philo->forks[second]->mutex_fork));
-	if (someone_has_died(philo->params))
-		return (pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
-			pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
-	pthread_mutex_lock(&(philo->params->print));
-	printf("%lld %s%d has taken a fork%s\n", get_timestamp(philo->params->time), YELLOW, philo->index + 1, RESET);
-	pthread_mutex_unlock(&(philo->params->print));
-	pthread_mutex_lock(&(philo->last_meal_mut));
-	if (someone_has_died(philo->params))
-		return (pthread_mutex_unlock(&(philo->last_meal_mut)), pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
-			pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
-	philo->last_meal = get_timestamp(philo->params->time);
-	pthread_mutex_lock(&(philo->params->print));
-	printf("%lld %s%d is eating%s\n", philo->last_meal, RED, philo->index + 1, RESET);
-	pthread_mutex_unlock(&(philo->last_meal_mut));
-	pthread_mutex_unlock(&(philo->params->print));
-	usleep(philo->params->time_eat * 1000);
-	if (someone_has_died(philo->params))
-		return (pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
-			pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
-	pthread_mutex_lock(&(philo->x_eaten_mut));
-	philo->times_eaten++;
-	if (someone_has_died(philo->params))
-		return (pthread_mutex_unlock(&(philo->x_eaten_mut)), pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
-			pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
-	pthread_mutex_unlock(&(philo->x_eaten_mut));
-	pthread_mutex_unlock(&((philo->forks[first])->mutex_fork));
-	pthread_mutex_unlock(&((philo->forks[second])->mutex_fork));
-	return (NULL);
-}
 
 static bool	completed_meals(t_philo	*philo)
 {
@@ -121,19 +35,19 @@ void	*life_routine(void *data)
 		usleep(1000);
 	while (!completed_meals(philo))
 	{
-		if (someone_has_died(philo->params))
+		if (someone_died(philo->params))
 			break ;
 		eat_routine(data);
-		if (completed_meals(philo) || someone_has_died(philo->params))
+		if (completed_meals(philo) || someone_died(philo->params))
 			break ;
 		sleep_routine(data);
-		if (someone_has_died(philo->params))
+		if (someone_died(philo->params))
 			break ;
 		pthread_mutex_lock(&(philo->params->print));
 		printf("%lld %s%d is thinking%s\n", get_timestamp(philo->params->time), GRAY, philo->index + 1, RESET);
 		pthread_mutex_unlock(&(philo->params->print));
 		usleep(philo->params->time_think * 1000);
-		if (someone_has_died(philo->params))
+		if (someone_died(philo->params))
 			break ;
 	}
 	return (NULL);
@@ -146,13 +60,13 @@ void	*sleep_routine(void *data)
 
 	philo = (t_philo *)data;
 	index = philo->index;
-	if (someone_has_died(philo->params))
+	if (someone_died(philo->params))
 		return (NULL);
 	pthread_mutex_lock(&(philo->params->print));
 	printf("%lld %s%d is sleeping%s\n", get_timestamp(philo->params->time), BLUE, index + 1, RESET);
 	pthread_mutex_unlock(&(philo->params->print));
 	usleep(philo->params->time_sleep * 1000);
-	if (someone_has_died(philo->params))
+	if (someone_died(philo->params))
 		return (NULL);
 	return (NULL);
 }
@@ -195,7 +109,7 @@ void	*monitor_routine(void *data)
 	
 	monitor = (t_monitor *)data;
 	while (philos_need_to_eat(monitor->philos, monitor->num_philos)
-		&& !someone_has_died(monitor->philos[0]->params))
+		&& !someone_died(monitor->philos[0]->params))
 	{
 		index = 0;
 		while (index < monitor->num_philos)
