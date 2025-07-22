@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/09 11:59:31 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/18 17:41:18 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/22 14:44:44 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,3 +47,15 @@ bool	valid_params(int argc, char **argv)
 		return (false);
 	return (true);
 }
+
+// void	ft_usleep(long ms, t_param *params)
+// {
+// 	long	time;
+
+// 	time = 0;
+// 	while (time < ms && !someone_died(params))
+// 	{
+// 		usleep(30);
+// 		time+= 30;
+// 	}
+// }

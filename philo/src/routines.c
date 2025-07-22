@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:43:39 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/22 12:25:37 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/22 14:55:14 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	*monitor_routine(void *data)
 			{
 				pthread_mutex_lock(&(monitor->philos[0]->params->dead));
 				monitor->philos[0]->params->one_dead = true;
-				usleep(200);
+				usleep(300);
 				pthread_mutex_lock(&(monitor->philos[0]->params->print));
 				printf("%lld %s%d died%s\n",get_timestamp(monitor->philos[index]->params->time),
 					GREEN, index + 1, RESET);
@@ -127,6 +127,8 @@ void	*monitor_routine(void *data)
 				break ;
 			}
 			index++;
+			if (!philos_need_to_eat(monitor->philos, monitor->num_philos))
+				break ;
 			usleep(100);
 		}
 	}

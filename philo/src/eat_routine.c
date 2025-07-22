@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/21 14:21:56 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/22 12:25:05 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/22 15:06:13 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,10 @@ static void	set_indices(t_philo *philo)
 static void	*finish_eating(t_philo *philo, int first, int second)
 {
 	pthread_mutex_lock(&(philo->last_meal_mut));
-	// if (someone_died(philo->params))
-	// 	return (pthread_mutex_unlock(&(philo->last_meal_mut)),
-	// 		pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
-	// 		pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
+	if (someone_died(philo->params))
+		return (pthread_mutex_unlock(&(philo->last_meal_mut)),
+			pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
+			pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
 	philo->last_meal = get_timestamp(philo->params->time);
 	pthread_mutex_unlock(&(philo->last_meal_mut));
 	print_eating(philo);
@@ -60,10 +60,10 @@ static void	*finish_eating(t_philo *philo, int first, int second)
 			pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
 	pthread_mutex_lock(&(philo->x_eaten_mut));
 	philo->times_eaten++;
-	// if (someone_died(philo->params))
-	// 	return (pthread_mutex_unlock(&(philo->x_eaten_mut)),
-	// 		pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
-	// 		pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
+	if (someone_died(philo->params))
+		return (pthread_mutex_unlock(&(philo->x_eaten_mut)),
+			pthread_mutex_unlock(&(philo->forks[first]->mutex_fork)),
+			pthread_mutex_unlock(&(philo->forks[second]->mutex_fork)), NULL);
 	pthread_mutex_unlock(&(philo->x_eaten_mut));
 	pthread_mutex_unlock(&((philo->forks[first])->mutex_fork));
 	pthread_mutex_unlock(&((philo->forks[second])->mutex_fork));
