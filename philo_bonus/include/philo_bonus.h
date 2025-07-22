@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/21 15:20:19 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/21 15:40:30 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/22 16:07:36 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <stdbool.h>
+# include <semaphore.h>
 
 # define YELLOW "\e[1;33m"
 # define YELlOW_B "\e[1;43m"
@@ -25,5 +27,18 @@
 # define GRAY "\e[1;37m"
 # define GREEN "\e[1;32m"
 # define RESET "\e[0m"
+
+typedef struct s_param
+{
+	int				num_philos;
+	int				time_die;
+	int				time_eat;
+	int				time_sleep;
+	int				time_think;
+	int				num_cycles;
+	long long		time;
+	bool			one_dead;
+	sem_t			*forks;
+}		t_param;
 
 #endif
