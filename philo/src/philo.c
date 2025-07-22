@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:19:42 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/21 14:35:57 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/22 11:54:01 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	main(int argc, char **argv)
 	data = populate_data(argc, argv);
 	if (!data)
 		return (1);
-	data->params->time = get_start_time() + 50;
+	data->params->time = get_start_time() + 200;
 	while (++i < data->params->num_philos)
 		if (pthread_create(&data->philos[i]->tid, NULL, life_routine,
 				data->philos[i]) != 0)

@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:43:39 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/21 14:33:44 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/22 12:25:37 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	*life_routine(void *data)
 	while (get_start_time() < philo->params->time)
 		usleep(30);
 	if (philo->index % 2 == 1)
-		usleep(1000);
+		usleep(philo->params->time_eat * 500);
 	while (!completed_meals(philo))
 	{
 		if (someone_died(philo->params))
@@ -127,6 +127,7 @@ void	*monitor_routine(void *data)
 				break ;
 			}
 			index++;
+			usleep(100);
 		}
 	}
 	return (NULL);
