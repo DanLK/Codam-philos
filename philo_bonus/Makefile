@@ -1,5 +1,5 @@
 NAME = philo_bonus
-SRC = philo.c atoi.c
+SRC = philo.c atoi.c init.c
 SRC_DIR = ./src
 OBJ_DIR = ./obj
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)

@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/21 15:20:19 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/22 16:07:36 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/29 17:07:56 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,8 @@ typedef struct s_param
 	bool			one_dead;
 	sem_t			*forks;
 }		t_param;
+
+int	ft_atoi(const char *nptr);
+int	main(int argc, char **argv);
 
 #endif
