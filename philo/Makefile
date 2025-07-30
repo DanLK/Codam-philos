@@ -4,18 +4,17 @@ SRC_DIR = ./src
 OBJ_DIR = ./obj
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
-CFLAGS += -Werror -Wall -Wextra
+CFLAGS += -Werror -Wall -Wextra 
+#-fsanitize=thread
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(CC) -Iinclude -o $(NAME) $(CFLAGS) $(OBJ)
-#-fsanitize=thread 
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
 	$(CC) -c -Iinclude $(CFLAGS) -o $@ $<
-#-fsanitize=thread
 
 clean:
 	rm -f $(OBJ)

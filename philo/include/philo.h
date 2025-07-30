@@ -6,12 +6,12 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/04 16:50:26 by dloustalot    #+#    #+#                 */
-/*   Updated: 2025/07/22 14:34:56 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/30 14:39:36 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-#define PHILO_H
+# define PHILO_H
 
 # include <pthread.h>
 # include <stdio.h>
@@ -22,9 +22,7 @@
 # include <sys/time.h>
 
 # define YELLOW "\e[1;33m"
-# define YELlOW_B "\e[1;43m"
 # define PURPLE "\e[1;35m"
-# define PURPLE_B "\e[1;45m"
 # define RED "\e[1;31m"
 # define BLUE "\e[1;34m"
 # define GRAY "\e[1;37m"
@@ -67,7 +65,6 @@ typedef struct s_philo
 	int				neighbor;
 }		t_philo;
 
-
 typedef struct s_monitor
 {
 	t_philo		**philos;
@@ -104,15 +101,17 @@ void		*sleep_routine(void *data);
 void		*monitor_routine(void *data);
 
 // Routine utils
-bool	inevitable_death(t_param *params);
-bool	someone_died(t_param *params);
+bool		inevitable_death(t_param *params);
+bool		someone_died(t_param *params);
+void		print_sleeping(t_philo *philo);
+void		print_thinking(t_philo *philo);
 
 //Utils
 long long	get_start_time(void);
 long long	get_timestamp(long long start_time);
 int			ft_atoi(const char *nptr);
 bool		valid_params(int argc, char **argv);
-void		ft_usleep(long ms, t_param *params);
+// void		ft_usleep(long ms, t_param *params);
 
 //DEbug
 void		print_philos(t_philo **philos, t_param *params);

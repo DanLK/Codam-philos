@@ -6,11 +6,11 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/17 19:00:42 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/17 19:01:01 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/30 12:58:58 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 #include <stdbool.h>
 
 static bool	is_space(char c)

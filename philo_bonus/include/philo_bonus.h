@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/21 15:20:19 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/29 17:07:56 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/30 12:59:48 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <semaphore.h>
+# include <string.h>
 
 # define YELLOW "\e[1;33m"
 # define YELlOW_B "\e[1;43m"
@@ -42,6 +43,6 @@ typedef struct s_param
 }		t_param;
 
 int	ft_atoi(const char *nptr);
-int	main(int argc, char **argv);
+t_param	*init_params(int argc, char **argv);
 
 #endif

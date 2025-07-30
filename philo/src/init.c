@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 13:41:20 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/21 14:23:44 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/30 14:42:27 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ t_param	*parse_params(int argc, char **argv)
 		pthread_mutex_init(&params->dead, NULL);
 		pthread_mutex_init(&params->print, NULL);
 		if (argc == 6)
-		params->num_cycles = ft_atoi(argv[5]);
+			params->num_cycles = ft_atoi(argv[5]);
 		else
-		params->num_cycles = -1;
+			params->num_cycles = -1;
 	}
 	return (params);
 }
@@ -89,7 +89,7 @@ t_philo	**init_philos(t_param *params, t_fork **forks)
 		i++;
 	}
 	philos[i] = NULL;
-	return(philos);
+	return (philos);
 }
 
 t_fork	*init_one_fork(int index)

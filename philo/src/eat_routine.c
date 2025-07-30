@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/21 14:21:56 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/22 15:06:13 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/30 14:41:19 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 static void	print_took_fork(t_philo *philo)
 {
 	pthread_mutex_lock(&(philo->params->print));
+	if (someone_died(philo->params))
+	{
+		pthread_mutex_unlock(&(philo->params->print));
+		return ;
+	}
 	printf("%lld %s%d has taken a fork%s\n",
 		get_timestamp(philo->params->time),
 		YELLOW, philo->index + 1, RESET);
@@ -24,6 +29,11 @@ static void	print_took_fork(t_philo *philo)
 static void	print_eating(t_philo *philo)
 {
 	pthread_mutex_lock(&(philo->params->print));
+	if (someone_died(philo->params))
+	{
+		pthread_mutex_unlock(&(philo->params->print));
+		return ;
+	}
 	printf("%lld %s%d is eating%s\n", philo->last_meal, RED,
 		philo->index + 1, RESET);
 	pthread_mutex_unlock(&(philo->params->print));

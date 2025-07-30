@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/07 15:43:39 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/22 14:55:14 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/30 14:53:39 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,7 @@ void	*life_routine(void *data)
 		sleep_routine(data);
 		if (someone_died(philo->params))
 			break ;
-		pthread_mutex_lock(&(philo->params->print));
-		printf("%lld %s%d is thinking%s\n", get_timestamp(philo->params->time), GRAY, philo->index + 1, RESET);
-		pthread_mutex_unlock(&(philo->params->print));
+		print_thinking(philo);
 		usleep(philo->params->time_think * 1000);
 		if (someone_died(philo->params))
 			break ;
@@ -62,16 +60,14 @@ void	*sleep_routine(void *data)
 	index = philo->index;
 	if (someone_died(philo->params))
 		return (NULL);
-	pthread_mutex_lock(&(philo->params->print));
-	printf("%lld %s%d is sleeping%s\n", get_timestamp(philo->params->time), BLUE, index + 1, RESET);
-	pthread_mutex_unlock(&(philo->params->print));
+	print_sleeping(philo);
 	usleep(philo->params->time_sleep * 1000);
 	if (someone_died(philo->params))
 		return (NULL);
 	return (NULL);
 }
 
-static bool philos_need_to_eat(t_philo	**philos, int num)
+static bool	philos_need_to_eat(t_philo	**philos, int num)
 {
 	int		i;
 	int		times_eaten;
@@ -97,16 +93,17 @@ static bool	time_expired(t_philo **philos, int index)
 
 	current_time = get_timestamp(philos[index]->params->time);
 	pthread_mutex_lock(&(philos[index]->last_meal_mut));
-	time_expired = current_time - philos[index]->last_meal > philos[index]->params->time_die;
+	time_expired = current_time - philos[index]->last_meal
+		> philos[index]->params->time_die;
 	pthread_mutex_unlock(&(philos[index]->last_meal_mut));
-	return(time_expired);
+	return (time_expired);
 }
 
 void	*monitor_routine(void *data)
 {
 	t_monitor	*monitor;
 	int			index;
-	
+
 	monitor = (t_monitor *)data;
 	while (philos_need_to_eat(monitor->philos, monitor->num_philos)
 		&& !someone_died(monitor->philos[0]->params))
@@ -118,11 +115,12 @@ void	*monitor_routine(void *data)
 			{
 				pthread_mutex_lock(&(monitor->philos[0]->params->dead));
 				monitor->philos[0]->params->one_dead = true;
-				usleep(300);
-				pthread_mutex_lock(&(monitor->philos[0]->params->print));
-				printf("%lld %s%d died%s\n",get_timestamp(monitor->philos[index]->params->time),
-					GREEN, index + 1, RESET);
 				pthread_mutex_unlock(&(monitor->philos[0]->params->dead));
+				usleep(500);
+				pthread_mutex_lock(&(monitor->philos[0]->params->print));
+				printf("%lld %s%d died%s\n",
+					get_timestamp(monitor->philos[index]->params->time),
+					GREEN, index + 1, RESET);
 				pthread_mutex_unlock(&(monitor->philos[0]->params->print));
 				break ;
 			}
@@ -134,14 +132,3 @@ void	*monitor_routine(void *data)
 	}
 	return (NULL);
 }
-
-// void	*simple_routine(void *data)
-// {
-// 	pthread_t	tid;
-// 	t_philo		*philo;
-
-// 	philo = (t_philo *)data;
-// 	tid = pthread_self();
-// 	printf("Philo #%d of %d is a thread [%ld]\n\n", philo->index, (philo->params->num_philos), tid);
-// 	return (NULL);
-// }
