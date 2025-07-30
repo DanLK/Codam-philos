@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/21 15:20:19 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/30 16:56:15 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/30 17:04:09 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,18 @@ typedef struct s_param
 	int				time_sleep;
 	int				time_think;
 	int				num_cycles;
-	long long		time;
+	long long		start;
 	bool			one_dead;
 	sem_t			*forks;
 }		t_param;
 
-int	ft_atoi(const char *nptr);
+// Init
 t_param	*init_params(int argc, char **argv);
+
+// Utils
+long long	get_start_time(void);
+long long	get_timestamp(long long start_time);
+int			ft_atoi(const char *nptr);
+bool		valid_params(int argc, char **argv);
 
 #endif
