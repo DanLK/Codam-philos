@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/21 15:20:19 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/30 12:59:48 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/30 16:56:15 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdbool.h>
 # include <semaphore.h>
 # include <string.h>
+# include <unistd.h>
 
 # define YELLOW "\e[1;33m"
 # define YELlOW_B "\e[1;43m"
