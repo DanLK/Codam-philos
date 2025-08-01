@@ -6,11 +6,11 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/09 11:59:31 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/22 14:44:44 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/07/31 15:26:33 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 long long	get_start_time(void)
 {

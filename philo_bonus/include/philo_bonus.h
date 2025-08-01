@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/21 15:20:19 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/07/30 17:04:09 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/08/01 16:11:41 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 # include <semaphore.h>
 # include <string.h>
 # include <unistd.h>
+# include <sys/time.h>
+# include <fcntl.h>
+# include <sys/wait.h>
 
 # define YELLOW "\e[1;33m"
 # define YELlOW_B "\e[1;43m"
