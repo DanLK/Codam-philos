@@ -6,7 +6,7 @@
 /*   By: dloustal <dloustal@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/07/21 15:20:19 by dloustal      #+#    #+#                 */
-/*   Updated: 2025/08/01 16:11:41 by dloustal      ########   odam.nl         */
+/*   Updated: 2025/08/05 16:50:47 by dloustal      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <sys/time.h>
 # include <fcntl.h>
 # include <sys/wait.h>
+# include <pthread.h>
 
 # define YELLOW "\e[1;33m"
 # define YELlOW_B "\e[1;43m"
@@ -43,16 +44,36 @@ typedef struct s_param
 	int				num_cycles;
 	long long		start;
 	bool			one_dead;
+	sem_t			*death_sem;
 	sem_t			*forks;
+	int				*pids;
 }		t_param;
+
+typedef struct s_philo
+{
+	long long	last_meal;
+	int			times_eaten;
+	// int			i;
+}		t_philo;
+
+// typedef struct s_pids
+// {
+// 	int	*pids;
+// }		t_pids;
+
 
 // Init
 t_param	*init_params(int argc, char **argv);
+t_philo	*init_philo(void);
+// t_pids	*init_pids(t_param *params);
 
 // Utils
 long long	get_start_time(void);
 long long	get_timestamp(long long start_time);
 int			ft_atoi(const char *nptr);
 bool		valid_params(int argc, char **argv);
+
+// Routines
+void	*monitor_routine(void *data);
 
 #endif
